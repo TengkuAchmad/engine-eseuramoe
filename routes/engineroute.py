@@ -9,6 +9,14 @@ def scan():
         if 'multipart/form-data' not in request.content_type:
             return jsonify({'status': 'Missing form-data in request'}), 400
         else :
+            model_id = request.form.get('model_id')
+            if not model_id:
+                return jsonify({'status': 'No Model ID in the request'}), 400
+            
+            token = request.form.get('token')
+            if not token:
+                return jsonify({'status': 'No token in the request'}), 403
+            
             if 'file' not in request.files:
                 return jsonify({'status': 'No file part in the request'}), 400
 
@@ -17,7 +25,7 @@ def scan():
             if file.filename == '':
                 return jsonify({'status': 'No file selected'}), 400
 
-            return enginecontroller.model_scan(file)
+            return enginecontroller.model_scan(model_id, file, token)
 
     else:
         return jsonify({"Bad Request" : "Invalid Method"}), 400
